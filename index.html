@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atalanta - Study Timer</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  
+  <div class="app-container">
+    <nav class="sidebar glass">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+        </div>
+        <span>Atalanta</span>
+      </div>
+      
+      <ul class="nav-links">
+        <li class="nav-item active" data-view="timer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+          <span>Timer</span>
+        </li>
+        <li class="nav-item" data-view="todos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+          <span>Tasks</span>
+        </li>
+        <li class="nav-item" data-view="calendar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>Calendar</span>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <div class="total-stats glass-inner">
+          <span class="stat-label">Total Study Time</span>
+          <span class="stat-value" id="totalTime">00:00:00</span>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <section id="timer-view" class="view active">
+        <div class="view-header glass">
+          <h1>Study Timer</h1>
+        </div>
+        
+        <div class="timer-container">
+          <div class="subject-selector glass">
+            <input type="text" id="subjectInput" placeholder="Enter subject name..." list="subjectList">
+            <datalist id="subjectList"></datalist>
+            <button id="addSubjectBtn" class="btn-glass">+</button>
+          </div>
+          
+          <div class="subjects-list glass" id="subjectsList"></div>
+          
+          <div class="timer-display glass">
+            <div class="active-subject" id="activeSubject">Select a subject to start</div>
+            <div class="time-display" id="timeDisplay">00:00:00</div>
+            <div class="timer-controls">
+              <button id="startBtn" class="btn-glass btn-large">Start</button>
+              <button id="pauseBtn" class="btn-glass btn-large hidden">Pause</button>
+              <button id="resetBtn" class="btn-glass btn-large">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="todos-view" class="view">
+        <div class="view-header glass">
+          <h1>Tasks</h1>
+        </div>
+        
+        <div class="todos-container">
+          <div class="todo-input-wrapper glass">
+            <input type="text" id="todoInput" placeholder="Add a new task...">
+            <input type="date" id="todoDate">
+            <select id="todoPriority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+            <button id="addTodoBtn" class="btn-glass">Add</button>
+          </div>
+          
+          <div class="todo-filters glass">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+          </div>
+          
+          <div class="todos-list glass" id="todosList"></div>
+          
+          <div class="todos-footer glass">
+            <span id="todosCount">0 tasks remaining</span>
+            <button id="clearCompletedBtn" class="btn-text">Clear completed</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="calendar-view" class="view">
+        <div class="view-header glass">
+          <h1>Calendar</h1>
+        </div>
+        
+        <div class="calendar-container">
+          <div class="calendar-nav glass">
+            <button id="prevMonth" class="btn-glass btn-icon">&lt;</button>
+            <h2 id="currentMonth"></h2>
+            <button id="nextMonth" class="btn-glass btn-icon">&gt;</button>
+          </div>
+          
+          <div class="calendar-grid glass" id="calendarGrid"></div>
+          
+          <div class="events-panel glass" id="eventsPanel">
+            <h3 id="selectedDate">Select a date</h3>
+            <div class="event-input">
+              <input type="text" id="eventInput" placeholder="Add event...">
+              <input type="time" id="eventTime">
+              <button id="addEventBtn" class="btn-glass">Add</button>
+            </div>
+            <div class="events-list" id="eventsList"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
