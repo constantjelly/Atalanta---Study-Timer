@@ -34,6 +34,19 @@ body {
   overflow-x: hidden;
 }
 
+.page-credit {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  pointer-events: none;
+  user-select: none;
+}
+
 .bg-gradient {
   position: fixed;
   inset: 0;
