@@ -5,7 +5,6 @@ const state = {
   activeSubject: null,
   timerInterval: null,
   timerSeconds: 0,
-  timerStartedAt: null,
   timerSessionDay: null,
   isRunning: false,
   todos: JSON.parse(localStorage.getItem('todos')) || [],
@@ -21,8 +20,6 @@ const state = {
     timeLeft: 0,
     interval: null,
     cycles: 0,
-    startedAt: null,
-    initialTime: 0,
   },
 };
 
@@ -172,15 +169,9 @@ function updateTimerDisplay() {
     const subjectTime = record.subjects[subject.id] || 0;
     const currentTime = subjectTime + (state.isRunning ? state.timerSeconds : 0);
     display.textContent = formatTime(currentTime);
-    if (state.isRunning) {
-      document.title = `${formatTime(currentTime)} - ${subject.name} - Atalanta`;
-    }
   } else {
     activeSubjectEl.textContent = 'Select a subject to start';
     display.textContent = '00:00:00';
-    if (!state.pomodoro.isRunning) {
-      document.title = state.originalTitle || 'Atalanta - Study Timer';
-    }
   }
 }
 
@@ -199,18 +190,15 @@ function toggleTimer() {
     state.dailyRecords[sessionDay].total += state.timerSeconds;
     state.timerSeconds = 0;
     state.timerSessionDay = null;
-    state.timerStartedAt = null;
     saveState();
 
     document.getElementById('startBtn').classList.remove('hidden');
     document.getElementById('pauseBtn').classList.add('hidden');
-    document.title = state.originalTitle || 'Atalanta - Study Timer';
   } else {
     state.isRunning = true;
     state.timerSessionDay = getTodayKey();
-    state.timerStartedAt = Date.now();
     state.timerInterval = setInterval(() => {
-      state.timerSeconds = Math.floor((Date.now() - state.timerStartedAt) / 1000);
+      state.timerSeconds++;
       updateTimerDisplay();
       renderSubjects();
     }, 1000);
@@ -228,7 +216,6 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   state.timerSeconds = 0;
   updateTimerDisplay();
   renderSubjects();
-  document.title = state.originalTitle || 'Atalanta - Study Timer';
 });
 
 function renderTodos() {
@@ -540,11 +527,6 @@ function updatePomodoroDisplay() {
   const secs = state.pomodoro.timeLeft % 60;
   time.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   cycles.textContent = `Cycles: ${state.pomodoro.cycles}`;
-
-  if (state.pomodoro.isRunning) {
-    const phaseLabel = state.pomodoro.isWorkPhase ? 'Work' : 'Break';
-    document.title = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} - ${phaseLabel} - Atalanta`;
-  }
 }
 
 const pomodoroAudio = new Audio('gustavorezende-bell-172780.mp3');
@@ -558,8 +540,7 @@ function pomodoroNotify(message) {
 }
 
 function pomodoroTick() {
-  const elapsed = Math.floor((Date.now() - state.pomodoro.startedAt) / 1000);
-  state.pomodoro.timeLeft = Math.max(0, state.pomodoro.initialTime - elapsed);
+  state.pomodoro.timeLeft--;
 
   if (state.pomodoro.timeLeft <= 0) {
     if (state.pomodoro.isWorkPhase) {
@@ -572,8 +553,6 @@ function pomodoroTick() {
       state.pomodoro.cycles++;
       pomodoroNotify('Break is over! Time to focus.');
     }
-    state.pomodoro.startedAt = Date.now();
-    state.pomodoro.initialTime = state.pomodoro.timeLeft;
   }
 
   updatePomodoroDisplay();
@@ -585,11 +564,8 @@ function togglePomodoro() {
     state.pomodoro.isRunning = false;
     document.getElementById('pomodoroStartBtn').classList.remove('hidden');
     document.getElementById('pomodoroPauseBtn').classList.add('hidden');
-    document.title = state.originalTitle || 'Atalanta - Study Timer';
   } else {
     state.pomodoro.isRunning = true;
-    state.pomodoro.startedAt = Date.now();
-    state.pomodoro.initialTime = state.pomodoro.timeLeft;
     state.pomodoro.interval = setInterval(pomodoroTick, 1000);
     document.getElementById('pomodoroStartBtn').classList.add('hidden');
     document.getElementById('pomodoroPauseBtn').classList.remove('hidden');
@@ -607,7 +583,6 @@ function resetPomodoro() {
   document.getElementById('pomodoroStartBtn').classList.remove('hidden');
   document.getElementById('pomodoroPauseBtn').classList.add('hidden');
   updatePomodoroDisplay();
-  document.title = state.originalTitle || 'Atalanta - Study Timer';
 }
 
 document.getElementById('pomodoroWorkTime').value = state.pomodoro.workTime;
@@ -631,8 +606,6 @@ document.getElementById('pomodoroPauseBtn').addEventListener('click', togglePomo
 document.getElementById('pomodoroResetBtn').addEventListener('click', resetPomodoro);
 
 function init() {
-  state.originalTitle = document.title;
-
   if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
